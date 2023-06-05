@@ -22,13 +22,13 @@ def write_to_csv(signal, price, sl, tp):
 while True:
     try:
         # Obtén los datos más recientes
-        klines = client.get_historical_klines('XRPUSDT', Client.KLINE_INTERVAL_1MINUTE, "1 day ago UTC")
+        klines = client.get_historical_klines('XRPUSDT', Client.KLINE_INTERVAL_15MINUTE, "1 day ago UTC")
         df = pd.DataFrame(klines, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume', 'close_time', 'quote_asset_volume', 'number_of_trades', 'taker_buy_base_asset_volume', 'taker_buy_quote_asset_volume', 'ignore'])
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
 
         if len(df) < 50:
             print(f"Solo se obtuvieron {len(df)} datos. No son suficientes para calcular las medias móviles. Intentando de nuevo...")
-            time.sleep(1)  # espera un segundo antes de la siguiente solicitud
+            time.sleep(2*60)  # espera un segundo antes de la siguiente solicitud
             continue
 
         # Calcula las medias móviles
@@ -65,7 +65,7 @@ while True:
         else:
             print("no signals")
         # Duerme durante un minuto antes de volver a verificar
-        time.sleep(60)
+        time.sleep(2*60)
 
     except BinanceAPIException as e:
         if e.status_code == 429:
